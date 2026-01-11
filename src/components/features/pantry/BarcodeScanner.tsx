@@ -22,10 +22,10 @@ export function BarcodeScanner({ onScan, onError }: BarcodeScannerProps) {
                     'code_39',
                     'qr_code'
                 ]} // Support more barcode formats
-                scanDelay={500} // Scan every 500ms for better detection
+                scanDelay={300} // Faster scanning - every 300ms for better mobile detection
                 components={{
                     torch: true,  // Enable flash
-                    finder: true, // Show finder overlay
+                    finder: false, // Disable built-in finder, we have custom overlay
                 }}
                 styles={{
                     container: {
@@ -36,7 +36,12 @@ export function BarcodeScanner({ onScan, onError }: BarcodeScannerProps) {
                 constraints={{
                     facingMode: 'environment', // Use back camera
                     aspectRatio: 1,
+                    // Higher resolution for better barcode detection on mobile
+                    width: { ideal: 1920 },
+                    height: { ideal: 1920 },
                 }}
+                // Allow multiple scans per second for better detection
+                allowMultiple={true}
             />
 
             {/* Visual Overlay for Zen Aesthetic */}
