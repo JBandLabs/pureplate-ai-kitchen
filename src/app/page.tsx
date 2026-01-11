@@ -1,65 +1,124 @@
-import Image from "next/image";
+import Link from 'next/link';
+import { ScanLine, Refrigerator, ChefHat, Search, Bell, Menu, ShoppingBag } from 'lucide-react';
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <main className="min-h-screen bg-[#050505] text-white pb-20">
+
+      {/* Top Bar */}
+      <header className="flex items-center justify-between px-6 py-6 sticky top-0 z-20 bg-[#050505]/80 backdrop-blur-md">
+        <button className="p-2 bg-neutral-800/50 rounded-full border border-white/5">
+          <Menu className="h-5 w-5 text-neutral-400" />
+        </button>
+        <span className="text-sm font-medium tracking-widest uppercase text-neutral-500">PurePlate</span>
+        <button className="p-2 bg-neutral-800/50 rounded-full border border-white/5 relative">
+          <Bell className="h-5 w-5 text-neutral-400" />
+          <span className="absolute top-2 right-2.5 h-2 w-2 bg-red-500 rounded-full border border-[#050505]"></span>
+        </button>
+      </header>
+
+      <div className="px-6 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+
+        {/* Hero / Greeting */}
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold leading-tight">
+            Manage your <br />
+            <span className="text-premium-gradient">Smart Kitchen</span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+
+        {/* Search Bar (Visual Only) */}
+        <div className="relative group">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-500 group-focus-within:text-orange-500 transition-colors" />
+          <input
+            type="text"
+            placeholder="Search pantry, recipes..."
+            className="w-full h-12 pl-12 pr-4 bg-neutral-900/50 border border-white/10 rounded-2xl focus:outline-none focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/50 transition-all placeholder:text-neutral-600"
+          />
+        </div>
+
+        {/* Main Actions (Glowing Cards) */}
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold">Quick Actions</h2>
+          </div>
+
+          <div className="grid grid-cols-3 gap-3">
+            {/* Scan Item - Active/Glow Look */}
+            <Link href="/pantry/scan" className="flex flex-col items-center gap-3 p-4 rounded-2xl bg-neutral-900/40 border border-orange-500/30 glow-effect relative overflow-hidden group">
+              <div className="absolute inset-0 bg-premium-gradient opacity-10 group-hover:opacity-20 transition-opacity"></div>
+              <div className="h-12 w-12 rounded-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center shadow-lg shadow-orange-500/20">
+                <ScanLine className="h-6 w-6 text-white" />
+              </div>
+              <span className="text-xs font-semibold tracking-wide text-orange-100">Scan</span>
+            </Link>
+
+            {/* Pantry */}
+            <Link href="/pantry" className="flex flex-col items-center gap-3 p-4 rounded-2xl bg-neutral-900/40 border border-white/5 hover:border-white/10 transition-colors group">
+              <div className="h-12 w-12 rounded-full bg-neutral-800 flex items-center justify-center group-hover:bg-neutral-700 transition-colors text-white">
+                <Refrigerator className="h-6 w-6" />
+              </div>
+              <span className="text-xs font-medium text-neutral-400 group-hover:text-neutral-200">Pantry</span>
+            </Link>
+
+            {/* Meals */}
+            <Link href="/meals" className="flex flex-col items-center gap-3 p-4 rounded-2xl bg-neutral-900/40 border border-white/5 hover:border-white/10 transition-colors group">
+              <div className="h-12 w-12 rounded-full bg-neutral-800 flex items-center justify-center group-hover:bg-neutral-700 transition-colors text-white">
+                <ChefHat className="h-6 w-6" />
+              </div>
+              <span className="text-xs font-medium text-neutral-400 group-hover:text-neutral-200">Cook</span>
+            </Link>
+          </div>
+        </div>
+
+        {/* Featured Card (Promo / Stats) */}
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold">Featured</h2>
+            <Link href="/store" className="text-xs text-orange-500 font-medium hover:text-orange-400">See Optimization</Link>
+          </div>
+
+          <Link href="/store" className="block relative h-48 rounded-3xl overflow-hidden group">
+            {/* Background Image Placeholder - High End Steak */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="https://images.unsplash.com/photo-1546964124-0cce460f38ef?q=80&w=2600"
+              alt="Smart Sourcing"
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-90"></div>
+
+            <div className="absolute bottom-0 left-0 p-6">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-orange-500/20 border border-orange-500/30 text-orange-400 text-[10px] font-bold uppercase tracking-wider mb-2 backdrop-blur-md">
+                <ShoppingBag className="h-3 w-3" />
+                Smart Sourcing
+              </div>
+              <h3 className="text-xl font-bold text-white mb-1">Weekly Optimization</h3>
+              <p className="text-sm text-neutral-400 line-clamp-2">Save up to 15% on your groceries by checking local deals.</p>
+            </div>
+          </Link>
         </div>
-      </main>
-    </div>
+
+      </div>
+
+      {/* Bottom Nav Mockup (Visual Only) */}
+      <div className="fixed bottom-0 left-0 w-full p-4 z-20">
+        <div className="bg-[#121212]/90 backdrop-blur-xl border border-white/5 rounded-3xl p-1 flex items-center justify-between px-6 h-16 shadow-2xl shadow-black">
+          <button className="p-3 text-orange-500 relative">
+            <div className="absolute bottom-1 left-1/2 -translate-x-1/2 h-1 w-1 bg-orange-500 rounded-full glow-effect"></div>
+            <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" /></svg>
+          </button>
+          <button className="p-3 text-neutral-500 hover:text-white transition-colors">
+            <Search className="h-6 w-6" />
+          </button>
+          <button className="p-3 text-neutral-500 hover:text-white transition-colors">
+            <ShoppingBag className="h-6 w-6" />
+          </button>
+          <button className="p-3 text-neutral-500 hover:text-white transition-colors">
+            <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+          </button>
+        </div>
+      </div>
+    </main>
   );
 }
