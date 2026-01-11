@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import { IDetectedBarcode } from '@yudiel/react-qr-scanner';
-import { ArrowLeft, Plus } from 'lucide-react';
+import { ArrowLeft, Plus, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FoodDataService, ProductData } from '@/services/FoodDataService';
@@ -20,6 +20,7 @@ export default function ScanPage() {
     const [manualName, setManualName] = useState('');
     const [scannedItems, setScannedItems] = useState<ProductData[]>([]);
     const [isScanning, setIsScanning] = useState(true);
+    const [scannerError, setScannerError] = useState<string | null>(null);
     const { addItem } = usePantry();
     const router = useRouter();
 
@@ -27,6 +28,9 @@ export default function ScanPage() {
         if (detectedCodes && detectedCodes.length > 0) {
             const newCode = detectedCodes[0];
             const rawValue = newCode.rawValue;
+
+            // Clear any previous errors
+            setScannerError(null);
 
             // Prevent duplicate scans for the session
             const alreadyScanned = scannedItems.some(item => item.code === rawValue);
@@ -47,7 +51,29 @@ export default function ScanPage() {
                 }
             } catch (e) {
                 console.error("Scan error", e);
+                setScannerError("Failed to fetch product data");
             }
+        }
+    };
+
+    const handleScannerError = (error: unknown) => {
+        console.error("Scanner error:", error);
+
+        // Provide user-friendly error messages
+        if (error instanceof Error) {
+            if (error.message.includes('Permission')) {
+                setScannerError("Camera permission denied. Please allow camera access in your browser settings.");
+            } else if (error.message.includes('NotFound')) {
+                setScannerError("No camera found on this device.");
+            } else if (error.message.includes('NotAllowed')) {
+                setScannerError("Camera access blocked. Please check your browser permissions.");
+            } else if (error.message.includes('NotReadable')) {
+                setScannerError("Camera is in use by another app. Please close other camera apps.");
+            } else {
+                setScannerError(`Camera error: ${error.message}`);
+            }
+        } else {
+            setScannerError("Unable to access camera. Please try again.");
         }
     };
 
@@ -78,6 +104,12 @@ export default function ScanPage() {
         router.push('/pantry');
     };
 
+    const retryScan = () => {
+        setScannerError(null);
+        setIsScanning(false);
+        setTimeout(() => setIsScanning(true), 100);
+    };
+
     return (
         <div className="flex min-h-screen flex-col bg-[#050505] text-white">
             {/* Header */}
@@ -106,16 +138,32 @@ export default function ScanPage() {
 
                 {activeTab === 'scan' ? (
                     <>
+                        {/* Error Display */}
+                        {scannerError && (
+                            <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
+                                <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
+                                <div className="flex-1">
+                                    <p className="text-sm text-red-200 font-medium">{scannerError}</p>
+                                    <button
+                                        onClick={retryScan}
+                                        className="mt-2 text-xs text-red-400 hover:text-red-300 underline"
+                                    >
+                                        Try Again
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
                         {/* Scanner Container */}
                         <div className="w-full relative group">
                             {/* Neon Glow around scanner */}
                             <div className="absolute -inset-0.5 bg-premium-gradient rounded-2xl opacity-20 group-hover:opacity-40 transition-opacity blur-md"></div>
 
-                            {isScanning ? (
+                            {isScanning && !scannerError ? (
                                 <div className="relative z-10 rounded-xl overflow-hidden shadow-2xl shadow-black">
                                     <BarcodeScanner
                                         onScan={handleScan}
-                                        onError={(err) => console.error(err)}
+                                        onError={handleScannerError}
                                     />
                                     <div className="absolute top-4 left-0 right-0 text-center pointer-events-none">
                                         <span className="px-3 py-1 bg-black/50 text-white text-[10px] uppercase font-bold tracking-widest rounded-full backdrop-blur-sm">Align Barcode</span>
@@ -123,9 +171,20 @@ export default function ScanPage() {
                                 </div>
                             ) : (
                                 <div className="aspect-square w-full bg-[#0A0A0A] border border-white/10 rounded-xl flex items-center justify-center text-neutral-500 relative z-10">
-                                    Scanner Paused
+                                    {scannerError ? 'Camera Error' : 'Scanner Paused'}
                                 </div>
                             )}
+                        </div>
+
+                        {/* Helpful Tips for Mobile */}
+                        <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4">
+                            <p className="text-xs text-blue-200 font-medium mb-2">📱 Mobile Tips:</p>
+                            <ul className="text-[10px] text-blue-300/80 space-y-1">
+                                <li>• Make sure camera permissions are enabled</li>
+                                <li>• Hold barcode 6-8 inches from camera</li>
+                                <li>• Ensure good lighting</li>
+                                <li>• Try using Chrome or Samsung Internet browser</li>
+                            </ul>
                         </div>
 
                         {/* Results List */}
